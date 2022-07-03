@@ -23,10 +23,19 @@ const fun = async () => {
         console.log("Connected to MongoDB");
 
         app.get("/products", async (req, res) => {
+            // console.log("GET /products", req.query);
+            const { page, size } = req.query;
+            console.log(page, size);
             const cursor = await collection.find({});
-            const products = await cursor.toArray();
-            // const products = await collection.find({}).limit(5).toArray();
             const count = await cursor.count();
+            let products;
+            if (page) {
+                products = await cursor.skip(page * size).limit(parseInt(size)).toArray();
+            }
+            else {
+                products = await cursor.toArray();
+            }
+
             res.send({ count, products });
         })
     } finally {
