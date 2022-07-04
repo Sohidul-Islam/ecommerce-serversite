@@ -21,6 +21,7 @@ const fun = async () => {
         await client.connect();
         const database = client.db("emajohn");
         const collection = database.collection("products");
+        const collection2 = database.collection("orders");
         console.log("Connected to MongoDB");
 
         app.get("/products", async (req, res) => {
@@ -54,6 +55,19 @@ const fun = async () => {
             const products = await cursor.toArray();
             // console.log("products in POST /products/byKeys", products);
             res.json(products);
+        })
+        // USE POST method for placeing order.
+        app.post("/products/order", async (req, res) => {
+
+            console.log("POST /products/order", req.body);
+            // const order = req.body
+            const order = req.body;
+
+            const cursor = await collection2.insertOne(order);
+            const result = await cursor.insertedId;
+            console.log("result", result);
+            res.json(cursor);
+
         })
     } finally {
         // await client.close();
