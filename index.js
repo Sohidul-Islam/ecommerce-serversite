@@ -58,7 +58,7 @@ const fun = async () => {
             console.log("POST /products/order", req.body);
             // const order = req.body
             const order = req.body;
-
+            order.createat = new Date();
             const cursor = await collection2.insertOne(order);
             const result = await cursor.insertedId;
             console.log("result", result);
