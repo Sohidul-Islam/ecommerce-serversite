@@ -4,6 +4,7 @@ const cors = require('cors');
 app.use(cors());
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
 app.use(express.json());
 port = 5000;
 
@@ -35,8 +36,24 @@ const fun = async () => {
             else {
                 products = await cursor.toArray();
             }
-
+            console.log(`for page: ${page} --> products found: , `, products.length);
             res.send({ count, products });
+        })
+
+        // USE POST method for get items by id.
+        app.post("/products/byKeys", async (req, res) => {
+            console.log("POST /products/byKeys", req.body);
+            const keys = req.body;
+            const query = { _id: { $in: [] } };
+            for (id of keys) {
+                // console.log("keys id : ", id);
+                query._id.$in.push(ObjectId(id));
+            }
+            // console.log("query", query);
+            const cursor = await collection.find(query);
+            const products = await cursor.toArray();
+            // console.log("products in POST /products/byKeys", products);
+            res.json(products);
         })
     } finally {
         // await client.close();
