@@ -103,6 +103,32 @@ const fun = async () => {
             // res.send(uniqueCategories);
         })
 
+        app.get("/product/categories/top", async (req, res) => {
+            const cursor = await collection.distinct("category");
+            // const count = await cursor.count();
+            const products = await cursor;
+            // const categories = products.map(product => product.category);
+            // const uniqueCategories = [...new Set(categories)];
+
+            const cursor2 = await collection.find({
+                category: {
+                    $in: products,
+                },
+                maxShipping: {
+                    $max: '$shipping'
+                }
+            });
+            const count = await cursor2.length;
+            const products2 = await cursor2.toArray();
+            const data = {
+                category: products,
+                count: count,
+                data: products2,
+            }
+            res.send(data);
+            // res.send(uniqueCategories);
+        })
+
         app.get("/product/categories/category", async (req, res) => {
             const category = req.query.category;
             // console.log("category: ", category);
