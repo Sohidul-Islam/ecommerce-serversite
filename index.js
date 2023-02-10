@@ -25,6 +25,7 @@ admin.initializeApp({
 const port = process.env.PORT || 5000;
 console.log("port number found: ", port);
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.yq19m.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function verifyIdToken(req, res, next) {
@@ -161,7 +162,6 @@ const fun = async () => {
             res.json(products);
         })
 
-
         // USE POST method for placeing order.
         app.post("/products/order", async (req, res) => {
             console.log("POST /products/order", req.body);
@@ -182,6 +182,7 @@ const fun = async () => {
 fun().catch(console.error);
 
 app.get("/", (req, res) => {
+    console.log("hello world")
     res.send("Hello World");
 })
 app.listen(port, () => {
