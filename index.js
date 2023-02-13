@@ -9,8 +9,16 @@ require('dotenv').config();
 const ObjectId = require('mongodb').ObjectId;
 
 // middleware
-app.use(cors());
 app.use(express.json());
+
+
+app.use(cors({
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+}));
+// app.use(cors());
 
 // firebase admin initialization: 
 
@@ -25,7 +33,7 @@ admin.initializeApp({
 const port = process.env.PORT || 5000;
 console.log("port number found: ", port);
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.yq19m.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri)
+console.log("mongo db connection url : ", uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function verifyIdToken(req, res, next) {
@@ -37,14 +45,13 @@ async function verifyIdToken(req, res, next) {
             req.decodedUserEmail = decodedToken.email;
         }
         catch (err) { }
-
     }
 
     next();
 }
 const fun = async () => {
     try {
-        await client.connect();
+        // await client.connect();
         const database = client.db("emajohn");
         const collection = database.collection("products");
         const collection2 = database.collection("orders");
@@ -176,6 +183,8 @@ const fun = async () => {
         })
     } finally {
         // await client.close();
+        // res.send("no connection")
+
     }
 }
 
@@ -183,7 +192,23 @@ fun().catch(console.error);
 
 app.get("/", (req, res) => {
     console.log("hello world")
-    res.send("Hello World");
+
+    const debug = {
+        mongodbUrl: uri,
+        service_account: serviceAccount
+
+    }
+    res.send("Ecommerce site is running");
+})
+app.get("/test", (req, res) => {
+    console.log("hello world")
+
+    const debug = {
+        mongodbUrl: uri,
+        service_account: serviceAccount
+
+    }
+    res.send("Test is running");
 })
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
